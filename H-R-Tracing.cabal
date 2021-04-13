@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6847f4255b2f04b2e232f7719866cdad3e1c3baeecce83eed39a9c465774d5a4
+-- hash: 4ec3567b4fbac20fb8f7583ecb2a7ecfb0102ea692fa0b9c868b4739ef252bb3
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -59,4 +59,8 @@ test-suite H-R-Tracing-test
   build-depends:
       H-R-Tracing
     , base >=4.7 && <5
+    , tasty
+    , tasty-hunit
+    , tasty-quickcheck
+    , tasty-smallcheck
   default-language: Haskell2010

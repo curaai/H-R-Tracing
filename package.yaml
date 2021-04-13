@@ -46,3 +46,7 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - H-R-Tracing
+    - tasty 
+    - tasty-hunit
+    - tasty-smallcheck
+    - tasty-quickcheck
