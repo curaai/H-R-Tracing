@@ -1,0 +1,10 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "H-R-Tracing:lib"
+
+    - path: "./app"
+      component: "H-R-Tracing:exe:H-R-Tracing-exe"
+
+    - path: "./test"
+      component: "H-R-Tracing:test:H-R-Tracing-test"
