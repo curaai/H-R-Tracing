@@ -7,7 +7,6 @@ import Img
 import Hitable
 import Camera
 
-
 main :: IO ()
 main = C.writeFile "res.ppm" . C.pack . toPpmStr $ screen camera sphere 
   where 

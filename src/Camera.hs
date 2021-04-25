@@ -29,9 +29,13 @@ make2d :: Integral a => Size a -> [[(Float, Float)]]
 make2d size = [[(i, j) | i <- range' w ] | j <- reverse . range' $ h]
   where range' f = [0, 1 / ((\x -> fromIntegral x :: Float) . f) size .. 1]
 
-screen cam sphere = map (map (ray2color . checkHit . toRay)) img'
+screen cam sphere = map (map (ray2color . hitColor . toRay)) img'
   where
-    checkHit r = if isHit sphere r then Left (Vec3 1.0 0 0) else Right r
+    hitColor r = case c of 
+      Just x -> Left x 
+      Nothing -> Right r
+      where 
+        c = hit sphere r
     ray2color (Left v) = v
     ray2color (Right r) = a *: (1.0 - t) + b *: t
       where 
