@@ -1,4 +1,4 @@
-module Vec where
+module Vector where
 
 import Control.Applicative
 
@@ -22,6 +22,8 @@ instance Num a => Num (Vec3 a) where
   fromInteger = pure . fromInteger
   negate = fmap negate
 
+type Vec = Vec3 Float 
+
 vDot :: Num a => Vec3 a -> Vec3 a -> a
 vDot v1 v2 = sum $ v1 * v2
 
@@ -30,7 +32,7 @@ vLength v = sqrt $ vDot v v
 
 vUnit :: Floating b => Vec3 b -> Vec3 b
 vUnit v = fmap (* k) v
-    where k = 1 / vLength v
+  where k = 1 / vLength v
 
 vCross :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 vCross v1 v2 = Vec3 x y z 
@@ -38,3 +40,5 @@ vCross v1 v2 = Vec3 x y z
     x = (_y v1 * _z v2) - (_z v1 * _y v2)
     y = negate $ (_x v1 * _z v2) - (_z v1 * _x v2)
     z = (_x v1 * _y v2) - (_y v1 * _x v2)
+
+v *: x = fmap (*x) v 

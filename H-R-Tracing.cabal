@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3703a7de0798a322617c4d7d0faf007762fbcf9f0f4bc6a4e9eeed6489e01cbd
+-- hash: b9ac30f0bbf2b9b5e1e57362c209cee07faa4652b3920f2a57c8bf30a8605bfd
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -27,9 +27,11 @@ source-repository head
 
 library
   exposed-modules:
+      Camera
       Img
       Lib
-      Vec
+      Ray
+      Vector
   other-modules:
       Paths_H_R_Tracing
   hs-source-dirs:
