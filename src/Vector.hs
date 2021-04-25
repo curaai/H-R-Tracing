@@ -23,6 +23,7 @@ instance Num a => Num (Vec3 a) where
   negate = fmap negate
 
 type Vec = Vec3 Float 
+type Point = Vec3 Float 
 
 vDot :: Num a => Vec3 a -> Vec3 a -> a
 vDot v1 v2 = sum $ v1 * v2
