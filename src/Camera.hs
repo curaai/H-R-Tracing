@@ -1,44 +1,51 @@
 module Camera where
 
-import Hitable
-import Img
-import Ray
-import Vector
+import           Hitable
+import           Img
+import           Ray
+import           Vector
 
-import Data.Either
+import           Data.Either
 
-data Camera = Camera { aspectRatio :: Float
-                     , imageSize :: Size Int
-                     , viewportSize :: Size Float
-                     , cPos:: Vec3 Float
-                     , cDirection :: Vec3 Float
-                     , focalLength :: Float
-                     } deriving(Show)
+data Camera =
+  Camera
+    { aspectRatio  :: Float
+    , imageSize    :: Size Int
+    , viewportSize :: Size Float
+    , cPos         :: Vec3 Float
+    , cDirection   :: Vec3 Float
+    , focalLength  :: Float
+    }
+  deriving (Show)
 
 camHVec :: Camera -> Vec3 Float
 camHVec cam = Vec3 (w . viewportSize $ cam) 0.0 0.0
+
 camVVec :: Camera -> Vec3 Float
 camVVec cam = Vec3 0 (h . viewportSize $ cam) 0.0
+
 camLVec :: Camera -> Vec3 Float
 camLVec cam = Vec3 0.0 0 (focalLength cam)
 
-
-lowerLeftCorner cam = cPos cam - camHVec cam *: 0.5 - camVVec cam *: 0.5 - camLVec cam
+lowerLeftCorner cam =
+  cPos cam - camHVec cam *: 0.5 - camVVec cam *: 0.5 - camLVec cam
 
 make2d :: Integral a => Size a -> [[(Float, Float)]]
-make2d size = [[(i, j) | i <- range' w ] | j <- reverse . range' $ h]
-  where range' f = [0, 1 / ((\x -> fromIntegral x :: Float) . f) size .. 1]
+make2d size = [[(i, j) | i <- range' w] | j <- reverse . range' $ h]
+  where
+    range' f = [0,1 / ((\x -> fromIntegral x :: Float) . f) size .. 1]
 
 screen cam sphere = map (map (ray2color . hitColor . toRay)) img'
   where
-    hitColor r = case c of 
-      Just x -> Left x 
-      Nothing -> Right r
-      where 
+    hitColor r =
+      case c of
+        Just x  -> Left x
+        Nothing -> Right r
+      where
         c = hit sphere r
     ray2color (Left v) = v
     ray2color (Right r) = a *: (1.0 - t) + b *: t
-      where 
+      where
         a = Vec3 1.0 1.0 1.0
         b = Vec3 0.5 0.7 1.0
         t = 0.5 * (_y unitDir + 1.0)
