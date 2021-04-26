@@ -35,6 +35,9 @@ type Point = Vec3 Float
 vDot :: Num a => Vec3 a -> Vec3 a -> a
 vDot v1 v2 = sum $ v1 * v2
 
+vLengthSqured :: Floating a => Vec3 a -> a
+vLengthSqured v = vDot v v
+
 vLength :: Floating a => Vec3 a -> a
 vLength v = sqrt $ vDot v v
 

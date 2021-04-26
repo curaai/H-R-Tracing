@@ -13,6 +13,7 @@
         "sergey-kintsel.haskell-formatter-vscode-extension",
         "justusadam.language-haskell",
         "ndmitchell.haskell-ghcid",
-        "hoovercj.haskell-linter"
+        "hoovercj.haskell-linter",
+        "ayh.ppmviewer"
     ]
 }
