@@ -28,6 +28,9 @@ instance Num a => Num (Vec3 a) where
   fromInteger = pure . fromInteger
   negate = fmap negate
 
+vec :: Vec3 Float
+vec = Vec3 1 1 1.0
+
 type Vec = Vec3 Float
 
 type Point = Vec3 Float

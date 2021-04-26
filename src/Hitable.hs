@@ -5,8 +5,29 @@ import           Vector
 
 import           Data.Maybe
 
--- class Hitable a where
---     hit :: Floating b => a -> Ray -> Maybe (Vec3 b)
+data HitRecord =
+  HitRecord
+    { point     :: Point
+    , normal    :: Vec
+    , tangent   :: Float
+    , frontface :: Bool
+    }
+  deriving (Show)
+
+faceNormal :: HitRecord -> Ray -> Vec -> HitRecord
+faceNormal record ray outnormal =
+  HitRecord (point record) normal' (tangent record) frontface'
+  where
+    frontface' = vDot (direction ray) outnormal < 0
+    normal' =
+      if frontface'
+        then outnormal
+        else (-outnormal)
+
+type TangentRange = (Float, Float)
+
+class Hitable a where
+  hit :: a -> Ray -> TangentRange -> HitRecord -> Maybe HitRecord
 
 data Sphere =
   Sphere
@@ -14,20 +35,28 @@ data Sphere =
     , radius :: Float
     }
 
-hit :: Sphere -> Ray -> Maybe (Vec3 Float)
-hit s r
-  | t < 0 = Nothing
-  | otherwise = Just ((n + 1) *: 0.5)
-  where
-    n = vUnit (at r t - Vec3 0 0 (-1))
-    t =
-      if discriminant > 0
-        then ((-halfB) - sqrt discriminant) / a
-        else -1
-      where
-        discriminant = halfB^2 - a*c
-        oc = origin r - center s
-        a = vLengthSqured . direction $ r
-        halfB = vDot oc (direction r)
-        c = vLengthSqured oc - radius s ^ 2
-  
+instance Hitable Sphere where
+  hit sp ray tr hr
+    | discriminant < 0 || isNothing nearestRoot = Nothing
+    | otherwise = Just (faceNormal hr' ray outnormal')
+    where
+      point' = at ray $tangent hr
+      tangent' = fromJust nearestRoot
+      outnormal' = (point' - center sp) *: (1 / radius sp)
+      hr' = HitRecord point' vec tangent' True
+      nearestRoot =
+        if checkRange rootA
+          then if checkRange rootB
+                 then Nothing
+                 else Just rootB
+          else Just rootA
+        where
+          rootA = ((-halfB) - sqrtd) / a
+          rootB = ((-halfB) + sqrtd) / a
+          checkRange root = root < fst tr || snd tr < root
+      sqrtd = sqrt discriminant
+      discriminant = halfB ^ 2 - a * c
+      oc = origin ray - center sp
+      a = vLengthSqured . direction $ ray
+      halfB = vDot oc (direction ray)
+      c = vLengthSqured oc - radius sp ^ 2
