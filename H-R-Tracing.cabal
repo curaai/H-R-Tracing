@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 035df53f19fd957181e59c5d9b98be8066781a85d3310b74645d4684aa4eb820
+-- hash: d23e3917ba12479f69dcbd5f0bd3b0b38bfa7ceab95f42672d75ee7e1e1407a4
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -28,7 +28,9 @@ source-repository head
 library
   exposed-modules:
       Camera
-      Hitable
+      Hittable.Hittable
+      Hittable.HittableList
+      Hittable.Sphere
       Img
       Lib
       Ray
@@ -59,6 +61,7 @@ test-suite H-R-Tracing-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestVec
       Paths_H_R_Tracing
   hs-source-dirs:
       test

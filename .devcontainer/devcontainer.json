@@ -6,7 +6,10 @@
         "terminal.integrated.shell.linux": "/bin/bash",
         "haskell.hlintOn": true,
         "haskell.liquidOn": true,
-        "haskell.languageServerVariant": "haskell-language-server"
+        "haskell.languageServerVariant": "haskell-language-server",
+        "editor.defaultFormatter": "sergey-kintsel.haskell-formatter-vscode-extension",
+        "haskell.formattingProvider": "stylish-haskell",
+        "editor.tabSize": 2
     },
     "extensions": [
         "haskell.haskell",

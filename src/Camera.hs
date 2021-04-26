@@ -1,6 +1,5 @@
 module Camera where
 
-import           Hitable
 import           Img
 import           Ray
 import           Vector
@@ -34,25 +33,24 @@ make2d :: Integral a => Size a -> [[(Float, Float)]]
 make2d size = [[(i, j) | i <- range' w] | j <- reverse . range' $ h]
   where
     range' f = [0,1 / ((\x -> fromIntegral x :: Float) . f) size .. 1]
-
-screen cam sphere = map (map (ray2color . hitColor . toRay)) img'
-  where
-    hitColor r =
-      case c of
-        Just x  -> Left x
-        Nothing -> Right r
-      where
-        c = hit sphere r
-    ray2color (Left v) = v
-    ray2color (Right r) = a *: (1.0 - t) + b *: t
-      where
-        a = Vec3 1.0 1.0 1.0
-        b = Vec3 0.5 0.7 1.0
-        t = 0.5 * (_y unitDir + 1.0)
-        unitDir = vUnit . direction $ r
-    toRay (u, v) = Ray (cPos cam) (llc + hv *: u + vv *: v - cPos cam)
-      where
-        llc = lowerLeftCorner cam
-        hv = camHVec cam
-        vv = camVVec cam
-    img' = make2d . imageSize $ cam
+-- screen cam sphere = map (map (ray2color . hitColor . toRay)) img'
+--   where
+--     hitColor r =
+--       case c of
+--         Just x  -> Left x
+--         Nothing -> Right r
+--       where
+--         c = hit sphere r
+--     ray2color (Left v) = v
+--     ray2color (Right r) = a *: (1.0 - t) + b *: t
+--       where
+--         a = Vec3 1.0 1.0 1.0
+--         b = Vec3 0.5 0.7 1.0
+--         t = 0.5 * (_y unitDir + 1.0)
+--         unitDir = vUnit . direction $ r
+--     toRay (u, v) = Ray (cPos cam) (llc + hv *: u + vv *: v - cPos cam)
+--       where
+--         llc = lowerLeftCorner cam
+--         hv = camHVec cam
+--         vv = camVVec cam
+--     img' = make2d . imageSize $ cam

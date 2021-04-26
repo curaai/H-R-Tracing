@@ -8,7 +8,7 @@ data Vec3 a =
     , _y :: a
     , _z :: a
     }
-  deriving (Show)
+  deriving (Show, Eq)
 
 instance Functor Vec3 where
   fmap f (Vec3 a b c) = Vec3 (f a) (f b) (f c)
