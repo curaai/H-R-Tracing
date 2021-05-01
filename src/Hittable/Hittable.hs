@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-overlapping-patterns #-}
+
 module Hittable.Hittable where
 
 import           Ray
@@ -28,5 +29,4 @@ faceNormal record ray outnormal =
 type TangentRange = (Float, Float)
 
 class Hittable a where
-  hit :: a -> Ray -> TangentRange -> HitRecord -> Maybe HitRecord
-
+  shotRay :: a -> Ray -> TangentRange -> HitRecord -> Maybe HitRecord

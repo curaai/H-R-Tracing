@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7c01c654e41b6fb04fed34a0e5efeb0b37da50c0b3eece2dedb9fb61da36d914
+-- hash: 31adf07981fd458935e01fffbe8ebb20a80c8d1c47cc1effff20fc54b4e37027
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -61,6 +61,7 @@ test-suite H-R-Tracing-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestHit
       TestRay
       TestVec
       Paths_H_R_Tracing

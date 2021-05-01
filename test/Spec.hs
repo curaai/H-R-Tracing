@@ -8,13 +8,14 @@ import           Img
 import           Ray
 import           Vector
 
+import           TestHit
 import           TestRay
 import           TestVec
 
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [unitTests, testRay, testVectors]
+tests = testGroup "Tests" [unitTests, testRay, testVectors, testSphere]
 
 unitTests =
   testGroup
