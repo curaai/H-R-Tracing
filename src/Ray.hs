@@ -1,6 +1,5 @@
 module Ray where
 
-import           Img
 import           Vector
 
 data Ray =
