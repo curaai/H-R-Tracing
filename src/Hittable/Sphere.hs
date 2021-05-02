@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module Hittable.Sphere where
 
 import           Hittable.Hittable
@@ -5,6 +7,7 @@ import           Hittable.Hittable
 import           Ray
 import           Vector
 
+import           Control.Monad
 import           Data.Either
 import           Data.Maybe
 
@@ -14,33 +17,38 @@ data Sphere =
     , radius :: Float
     }
 
--- instance Hittable Sphere where
---   shotRay
---  sp ray tr hr
---     | discriminant < 0 || isNothing nearestRoot = Nothing
---     | otherwise = Just (faceNormal hr' ray outnormal')
---     where
---       point' = at ray $tangent hr
---       tangent' = fromJust nearestRoot
---       outnormal' = (point' - center sp) *: (1 / radius sp)
---       hr' = HitRecord point' vec tangent' True
---       nearestRoot =
---         if checkRange rootA
---           then if checkRange rootB
---                  then Nothing
---                  else Just rootB
---           else Just rootA
---         where
---           rootA = ((-halfB) - sqrtd) / a
---           rootB = ((-halfB) + sqrtd) / a
---           checkRange root = root < fst tr || snd tr < root
+instance Hittable Sphere where
+  shotRay sp ray rr
+    | isNothing normal_ = Nothing
+    | isNothing root' = Nothing
+    | otherwise = Just (faceNormal hr' ray outnormal')
+    where
+      normal_ = hitRoot sp ray
+      root' = findNearestRoot rr $ fromJust normal_
+      point' = at ray $ fromJust root'
+      outnormal' = (point' - center sp) *: (1 / radius sp)
+      hr' = HitRecord point' vec (fromJust root') True
+
+instance (Hittable a) => Hittable [a] where
+  shotRay a ray rr = foldl f Nothing a
+    where
+      f :: Hittable a => Maybe HitRecord -> a -> Maybe HitRecord
+      f hr obj =
+        let res = shotRay obj ray (rr' hr)
+         in if isNothing res
+              then hr
+              else res
+        where
+          rr' hr = RootRange 0 (maybe 9999 root hr)
+
 {-|
 discriminant = h^2 - ac
 d > 0 => 2 solution
 d == 0 ==> 1 solution
 d < 0 => no solution
 -}
-hitNormal sphere ray
+hitRoot :: Sphere -> Ray -> Maybe (Float, Float)
+hitRoot sphere ray
   | discriminant < 0 = Nothing
   | otherwise =
     Just

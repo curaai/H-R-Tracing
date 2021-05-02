@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 31adf07981fd458935e01fffbe8ebb20a80c8d1c47cc1effff20fc54b4e37027
+-- hash: e55117530df2561ef5df9b10b2451f18a83b0f5e528dd396c9d08567686112d9
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -29,7 +29,6 @@ library
   exposed-modules:
       Camera
       Hittable.Hittable
-      Hittable.HittableList
       Hittable.Sphere
       Img
       Lib
