@@ -46,7 +46,7 @@ screen cam spheres = Image (imageSize cam) (map computeColor img')
               , (toFloat y + j) / (toFloat . height . imageSize $ cam))
             (i, g1) = sampleFloat g'
             (j, g2) = sampleFloat g1
-            (color, g3) = rayColor spheres (posToRay' (u, v)) 50 g2
+            (color, g3) = rayColor spheres (posToRay' (u, v)) (rayMax cam) g2
         vec2color' = vec2color $ toFloat . samplePerPixel $ cam
         posToRay' = posToRay cam
         g = mkStdGen $ x * (width . imageSize $ cam) + y

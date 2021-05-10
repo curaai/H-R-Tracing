@@ -21,4 +21,5 @@ main = C.writeFile "res.ppm" . C.pack . toPpmStr $ screen cam spheres
         (Vec3 0 0 0)
         1
         50
+        50
     spheres = [Sphere (Vec3 0 0 (-1)) 0.5, Sphere (Vec3 0 (-100.5) (-1)) 100]

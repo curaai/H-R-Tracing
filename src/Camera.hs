@@ -1,5 +1,6 @@
 module Camera where
 
+import           Data.Bifunctor
 import           Ray
 import           Sampling
 import           Vector
@@ -24,6 +25,7 @@ data Camera =
     , cDirection     :: Vec3 Float
     , focalLength    :: Float
     , samplePerPixel :: Int
+    , rayMax ::Int
     }
   deriving (Show)
 
@@ -68,10 +70,10 @@ rayColor spheres ray cnt g
   | cnt <= 0 = (Vec3 0 0 0, g)
   | otherwise = ray2vec $ hitRay spheres ray
   where
-    ray2vec (Left record) = (fst res *: 0.5, snd res)
+    ray2vec (Left record) = first (*: 0.5) res
       where
-        (rus, g') = sampleUnitSphere g
-        target = point record + normal record + rus
+        (rus, g') = sampleInHemisPhere (normal record) g
+        target = point record + rus
         res =
           rayColor
             spheres

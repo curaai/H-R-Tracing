@@ -1,6 +1,7 @@
 module Sampling where
 
-import           System.Random (RandomGen, mkStdGen, randomR)
+import           Data.Bifunctor
+import           System.Random  (RandomGen, mkStdGen, randomR)
 import           Vector
 
 sampleFloat :: RandomGen g => g -> (Float, g)
@@ -21,3 +22,15 @@ sampleUnitSphere g = find (Vec3 1 1 1, g)
       | otherwise = find (sampleVector g')
       where
         f x = 2 * (x - 0.5)
+
+sampleUnitVector :: RandomGen g => g -> (Vec3 Float, g)
+sampleUnitVector g =
+  let sampled = sampleUnitSphere g
+   in first vUnit sampled
+
+sampleInHemisPhere :: RandomGen g => Vec3 Float -> g -> (Vec3 Float, g)
+sampleInHemisPhere normal' g
+  | 0 < vDot inUnitSphere normal' = (inUnitSphere, g')
+  | otherwise = (-inUnitSphere, g')
+  where
+    (inUnitSphere, g') = sampleUnitVector g
