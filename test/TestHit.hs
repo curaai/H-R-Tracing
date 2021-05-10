@@ -17,7 +17,7 @@ t0 = testCase "Single sphere case" $ isJust (hitRoot s r) @?= True
     r = Ray (Vec3 0 0 0) (Vec3 0 0 1)
     s = Sphere (Vec3 0 0 0) 0.5
 
-t1 = testCase "Two sphere case" $ isLeft (hitColor [s1, s2] r) @?= True
+t1 = testCase "Two sphere case" $ isLeft (hitRay [s1, s2] r) @?= True
   where
     r = Ray (Vec3 0 0 0) (Vec3 0 0 (-1))
     s1 = Sphere (Vec3 0 0 (-1)) 0.5

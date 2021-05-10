@@ -2,6 +2,8 @@
 
 module Hittable.Sphere where
 
+import           System.Random
+
 import           Hittable.Hittable
 
 import           Ray
@@ -9,6 +11,7 @@ import           Vector
 
 import           Control.Monad
 import           Data.Either
+import           Data.List.Split
 import           Data.Maybe
 
 data Sphere =
@@ -56,6 +59,6 @@ hitRoot sphere ray
   where
     discriminant = halfB ^ 2 - a * c
     oc = origin ray - center sphere
-    a = vLengthSqured . direction $ ray
+    a = vLengthSquared . direction $ ray
     halfB = vDot oc (direction ray)
-    c = vLengthSqured oc - radius sphere ^ 2
+    c = vLengthSquared oc - radius sphere ^ 2

@@ -4,6 +4,7 @@ import           Data.Ord
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
+import           Camera
 import           Img
 import           Ray
 import           Vector
@@ -16,12 +17,4 @@ import           TestVec
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [unitTests, testRay, testVectors, testSphere, testCamera]
-
-unitTests =
-  testGroup
-    "Unit tests"
-    [testCase "Gradient Image" $ (calcSize . gradientImg) oriSize @?= oriSize]
-  where
-    oriSize = Size 8 10
-    calcSize arr = Size (length . head $ arr) (length arr)
+tests = testGroup "Tests" [testRay, testVectors, testSphere, testCamera]

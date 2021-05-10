@@ -20,6 +20,7 @@ cam =
     (Vec3 0 0 0)
     (Vec3 0 0 0)
     1
+    100
 
 t0 =
   testGroup
@@ -31,7 +32,6 @@ t0 =
       Ray cPos' (Vec3 (negate . _x $ llc) (negate . _y $ llc) (-1))
     ]
   where
-    toRay' = toRay cam
+    toRay' = posToRay cam
     cPos' = cPos cam
     llc = lowerLeftCorner cam
-
