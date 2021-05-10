@@ -95,5 +95,6 @@ data Color =
 
 vec2color spp v = Color (_x cv) (_y cv) (_z cv)
   where
-    cv = fmap (truncate . (* 256) . clamp . sqrt . (* (1 / spp))) v
+    cv = fmap (truncate . (* 256) . clamp . gammaCorrection) v
     clamp x = max 0 . min 0.999 $ x
+    gammaCorrection = sqrt . (* (1 / spp))

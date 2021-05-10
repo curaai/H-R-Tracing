@@ -1,11 +1,10 @@
-{-# LANGUAGE FlexibleInstances #-}
-
 module Hittable.Sphere where
 
 import           System.Random
 
 import           Hittable.Hittable
 
+import           Numeric.Limits
 import           Ray
 import           Vector
 
@@ -42,7 +41,7 @@ instance (Hittable a) => Hittable [a] where
               then hr
               else res
         where
-          rr' hr = RootRange 0 (maybe 9999 root hr)
+          rr' hr = RootRange 0.001 (maybe maxValue root hr)
 
 {-|
 discriminant = h^2 - ac

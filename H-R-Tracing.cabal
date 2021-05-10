@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e55117530df2561ef5df9b10b2451f18a83b0f5e528dd396c9d08567686112d9
+-- hash: 1d38fd502d29b51bb2c71fb0b7c4c6c7bf32c6f7c4cd523a0d48e915e2344935
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -33,8 +33,8 @@ library
       Img
       Lib
       Ray
-      Vector
       Sampling
+      Vector
   other-modules:
       Paths_H_R_Tracing
   hs-source-dirs:
@@ -42,6 +42,7 @@ library
   build-depends:
       base >=4.7 && <5
     , bytestring
+    , numeric-limits >=0.1.0.0
     , random
     , split
   default-language: Haskell2010
@@ -57,12 +58,16 @@ executable H-R-Tracing-exe
       H-R-Tracing
     , base >=4.7 && <5
     , bytestring
+    , numeric-limits >=0.1.0.0
+    , random
+    , split
   default-language: Haskell2010
 
 test-suite H-R-Tracing-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestCamera
       TestHit
       TestRay
       TestVec
@@ -74,6 +79,9 @@ test-suite H-R-Tracing-test
       H-R-Tracing
     , base >=4.7 && <5
     , bytestring
+    , numeric-limits >=0.1.0.0
+    , random
+    , split
     , tasty
     , tasty-hunit
     , tasty-quickcheck

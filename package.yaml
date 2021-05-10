@@ -21,7 +21,10 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- numeric-limits >= 0.1.0.0
 - bytestring
+- random 
+- split
 
 library:
   source-dirs: src
