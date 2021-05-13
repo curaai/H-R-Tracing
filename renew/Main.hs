@@ -2,18 +2,7 @@ module Main where
 
 import qualified Data.ByteString.Char8 as C
 
-data Color a =
-  Color
-    { red   :: a
-    , green :: a
-    , blue  :: a
-    }
-
-instance Functor Color where
-  fmap f (Color r' g' b') = Color (f r') (f g') (f b')
-
-instance Show a => Show (Color a) where
-  show (Color r' g' b') = unwords . map show $ [r', g', b']
+import           Vector
 
 data Size =
   Size
@@ -29,7 +18,7 @@ makeSimplePPM size =
     size' = unwords . map show $ [width size, height size]
     toColor (y, x) =
       truncate . (* 255.999) <$>
-      Color
+      Vec3
         (toFloat x / ((+ (-1)) . toFloat . width) size)
         (toFloat y / ((+ (-1)) . toFloat . height) size)
         0.25
