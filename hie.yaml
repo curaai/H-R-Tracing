@@ -8,8 +8,5 @@ cradle:
       - path: "./app"
         component: "H-R-Tracing:exe:H-R-Tracing-exe"
 
-      - path: "./renew"
-        component: "H-R-Tracing:exe:H-R-Tracing-renew"
-
       - path: "./test"
         component: "H-R-Tracing:test:H-R-Tracing-test"

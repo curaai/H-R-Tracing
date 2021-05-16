@@ -10,4 +10,4 @@ data Ray =
   deriving (Show, Eq)
 
 at :: Ray -> Float -> Point
-at ray power = origin ray + direction ray *: power
+at ray power = origin ray + direction ray * pure power

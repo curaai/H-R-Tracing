@@ -39,15 +39,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - H-R-Tracing
-  H-R-Tracing-renew:
-    main:                Main.hs
-    source-dirs:         renew
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - H-R-Tracing
+
 
 tests:
   H-R-Tracing-test:

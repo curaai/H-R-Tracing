@@ -62,3 +62,9 @@ vCross v1 v2 = Vec3 x y z
     x = (_y v1 * _z v2) - (_z v1 * _y v2)
     y = (_z v1 * _x v2) - (_x v1 * _z v2)
     z = (_x v1 * _y v2) - (_y v1 * _x v2)
+
+vSetX v x = Vec3 x (_y v) (_z v)
+
+vSetY v x = Vec3 (_x v) x (_z v)
+
+vSetZ v x = Vec3 (_x v) (_y v) x
