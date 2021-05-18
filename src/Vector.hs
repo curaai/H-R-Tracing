@@ -67,4 +67,4 @@ vSetX v x = Vec3 x (_y v) (_z v)
 
 vSetY v x = Vec3 (_x v) x (_z v)
 
-vSetZ v x = Vec3 (_x v) (_y v) x
+vSetZ v = Vec3 (_x v) (_y v)

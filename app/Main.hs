@@ -14,7 +14,7 @@ drawImg size = unlines $ "P3" : size' : "255" : map (show . writeColor) arr
       where
         cam =
           Camera
-            (Size viewportHeight (viewportHeight / aspectRatio))
+            (Size (aspectRatio * viewportHeight) viewportHeight)
             (pure 0)
             (Vec3 0 0 focalLength')
             focalLength'
