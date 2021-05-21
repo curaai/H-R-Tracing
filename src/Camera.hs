@@ -44,14 +44,19 @@ pos2ray cam (u, v) =
 
 ray2color :: Ray -> Vec3 Float
 ray2color r =
-  if hitSphere (Vec3 0 0 (-1)) 0.5 r
-    then Vec3 1 0 0
-    else let t = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
-          in pure (1 - t) + pure t * Vec3 0.5 0.7 1.0
+  let t = hitSphere (Vec3 0 0 (-1)) 0.5 r
+   in if 0 < t
+        then (* 0.5) . (+ 1) . vUnit $ at r t - Vec3 0 0 (-1)
+        else let t' = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
+              in pure (1 - t') + pure t' * Vec3 0.5 0.7 1.0
   where
-    hitSphere ctr radius ray = (b * b - 4 * a * c) > 0
+    hitSphere ctr radius ray =
+      let discriminant = halfB ^ 2 - a * c
+       in if discriminant < 0
+            then -1
+            else ((-halfB) - sqrt discriminant) / a
       where
         oc = origin ray - ctr
-        a = vDot (direction ray) (direction ray)
-        b = vDot oc (direction ray) * 2
-        c = vDot oc oc - radius ^ 2
+        a = vLengthSquared . direction $ ray
+        halfB = vDot oc (direction ray)
+        c = vLengthSquared oc - radius ^ 2
