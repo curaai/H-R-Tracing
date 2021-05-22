@@ -1,5 +1,9 @@
 module Camera where
 
+import           Data.Maybe
+import           Hittable.Hittable
+import           Hittable.Sphere
+import           Numeric.Limits
 import           Ray
 import           Vector
 
@@ -32,8 +36,8 @@ lowerLeftCorner :: Camera -> Vec3 Float
 lowerLeftCorner cam =
   cameraPos cam - camHVec cam * 0.5 - camVVec cam * 0.5 - camLVec cam
 
-render :: Camera -> [(Float, Float)] -> [Color Float]
-render cam = map (ray2color . pos2ray cam)
+render :: Hittable a => Camera -> a -> [(Float, Float)] -> [Vec3 Float]
+render cam objs = map (ray2color objs . pos2ray cam)
 
 pos2ray :: Camera -> (Float, Float) -> Ray
 pos2ray cam (u, v) =
@@ -42,21 +46,11 @@ pos2ray cam (u, v) =
         (cameraPos cam)
         (llc + pure u * camHVec cam + pure v * camVVec cam - cameraPos cam)
 
-ray2color :: Ray -> Vec3 Float
-ray2color r =
-  let t = hitSphere (Vec3 0 0 (-1)) 0.5 r
-   in if 0 < t
-        then (* 0.5) . (+ 1) . vUnit $ at r t - Vec3 0 0 (-1)
-        else let t' = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
-              in pure (1 - t') + pure t' * Vec3 0.5 0.7 1.0
+ray2color :: Hittable a => a -> Ray -> Vec3 Float
+ray2color objs r =
+  let hr = hit objs r (HitRange 0 maxValue)
+   in maybe backgroundRayColor ((* 0.5) . (+ 1) . hitNormal) hr
   where
-    hitSphere ctr radius ray =
-      let discriminant = halfB ^ 2 - a * c
-       in if discriminant < 0
-            then -1
-            else ((-halfB) - sqrt discriminant) / a
-      where
-        oc = origin ray - ctr
-        a = vLengthSquared . direction $ ray
-        halfB = vDot oc (direction ray)
-        c = vLengthSquared oc - radius ^ 2
+    backgroundRayColor =
+      let t' = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
+       in pure (1 - t') + pure t' * Vec3 0.5 0.7 1.0

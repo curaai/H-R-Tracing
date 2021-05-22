@@ -3,14 +3,17 @@ module Main where
 import qualified Data.ByteString.Char8 as C
 
 import           Camera
+import           Hittable.Hittable
+import           Hittable.HittableList
+import           Hittable.Sphere
 import           Vector
 
 aspectRatio = 16 / 9
 
-drawImg :: (Show a, Integral a) => Size a -> String
-drawImg size = unlines $ "P3" : size' : "255" : map (show . writeColor) arr
+drawImg size hittables =
+  unlines $ "P3" : size' : "255" : map (show . writeColor) arr
   where
-    arr = render cam $ map relative coords
+    arr = render cam hittables $ map relative coords
       where
         cam =
           Camera
@@ -33,4 +36,6 @@ drawImg size = unlines $ "P3" : size' : "255" : map (show . writeColor) arr
 main :: IO ()
 main =
   C.writeFile "res.ppm" . C.pack $
-  drawImg (Size 400 (truncate (400 / aspectRatio)))
+  drawImg (Size 400 (truncate (400 / aspectRatio))) spheres
+  where
+    spheres = [Sphere (Vec3 0 0 (-1)) 0.5, Sphere (Vec3 0 (-100.5) (-1)) 100]

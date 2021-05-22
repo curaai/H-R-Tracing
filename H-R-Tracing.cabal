@@ -1,8 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
+--
+-- hash: e4ff9258ad1c85f7134978d239b3701cf3346297d9745662e0c69f3978e41a79
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -26,6 +28,9 @@ source-repository head
 library
   exposed-modules:
       Camera
+      Hittable.Hittable
+      Hittable.HittableList
+      Hittable.Sphere
       Lib
       Ray
       Vector
