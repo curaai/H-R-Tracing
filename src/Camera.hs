@@ -1,10 +1,10 @@
 module Camera where
 
-import           Data.Maybe
 import           Hittable.Hittable
-import           Hittable.Sphere
 import           Numeric.Limits
 import           Ray
+import           Sampling
+import           System.Random
 import           Vector
 
 data Size a =
@@ -36,8 +36,29 @@ lowerLeftCorner :: Camera -> Vec3 Float
 lowerLeftCorner cam =
   cameraPos cam - camHVec cam * 0.5 - camVVec cam * 0.5 - camLVec cam
 
-render :: Hittable a => Camera -> a -> [(Float, Float)] -> [Vec3 Float]
-render cam objs = map (ray2color objs . pos2ray cam)
+toFloat x = fromIntegral x :: Float
+
+render ::
+     (Integral b, Hittable a) => Camera -> Size Int -> Int -> a -> [Color b]
+render cam size spp objs = map computeColor coords
+  where
+    coords = (,) <$> reverse [0 .. height size - 1] <*> [0 .. width size - 1]
+    computeColor (y, x) =
+      vec2color spp . fst $ foldl sampling (Vec3 0 0 0, g) [1 .. spp]
+      where
+        g = mkStdGen $ y * width size + x
+        sampling :: RandomGen g => (Vec3 Float, g) -> a -> (Vec3 Float, g)
+        sampling (acc, g) _ = (acc + (ray2color objs . pos2ray cam) (u, v), g')
+          where
+            func f v = v / ((+ (-1)) . toFloat . f) size
+            (u, v) = (func width (toFloat x + i), func height (toFloat y + j))
+            (i, g1) = sampleFloat g
+            (j, g') = sampleFloat g1
+
+vec2color :: (Integral b, Integral a) => a -> Vec3 Float -> Color b
+vec2color spp = fmap (truncate . (* 256) . clamp 0 0.999 . (/ toFloat spp))
+  where
+    clamp min' max' x = max min' . min max' $ x
 
 pos2ray :: Camera -> (Float, Float) -> Ray
 pos2ray cam (u, v) =

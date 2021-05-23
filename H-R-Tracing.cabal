@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e4ff9258ad1c85f7134978d239b3701cf3346297d9745662e0c69f3978e41a79
+-- hash: 59a02e5b35095f83326896c1b7b0096530bbeb8a2ac1f016a71d6812773d45ff
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Hittable.Sphere
       Lib
       Ray
+      Sampling
       Vector
   other-modules:
       Paths_H_R_Tracing

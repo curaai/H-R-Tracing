@@ -10,10 +10,9 @@ import           Vector
 
 aspectRatio = 16 / 9
 
-drawImg size hittables =
-  unlines $ "P3" : size' : "255" : map (show . writeColor) arr
+drawImg size hittables = unlines $ "P3" : size' : "255" : map show arr
   where
-    arr = render cam hittables $ map relative coords
+    arr = render cam size 50 hittables
       where
         cam =
           Camera
@@ -24,13 +23,6 @@ drawImg size hittables =
           where
             viewportHeight = 2
             focalLength' = 1
-        coords =
-          (,) <$> reverse [0 .. height size - 1] <*> [0 .. width size - 1]
-        relative (y, x) = (func width x, func height y)
-          where
-            func f v = toFloat v / ((+ (-1)) . toFloat . f) size
-            toFloat x = fromIntegral x :: Float
-    writeColor = fmap (truncate . (* 255.999))
     size' = unwords . map show $ [width size, height size]
 
 main :: IO ()
