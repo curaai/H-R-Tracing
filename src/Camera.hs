@@ -1,5 +1,6 @@
 module Camera where
 
+import           Data.Maybe
 import           Hittable.Hittable
 import           Numeric.Limits
 import           Ray
@@ -39,24 +40,33 @@ lowerLeftCorner cam =
 toFloat x = fromIntegral x :: Float
 
 render ::
-     (Integral b, Hittable a) => Camera -> Size Int -> Int -> a -> [Color b]
-render cam size spp objs = map computeColor coords
+     (Integral b, Integral a1, Hittable a2)
+  => Camera
+  -> Size Int
+  -> a1
+  -> Int
+  -> a2
+  -> [Color b]
+render cam (Size w h) spp rayDepth objs = map computeColor coords
   where
-    coords = (,) <$> reverse [0 .. height size - 1] <*> [0 .. width size - 1]
+    coords = (,) <$> reverse [0 .. h - 1] <*> [0 .. w - 1]
     computeColor (y, x) =
       vec2color spp . fst $ foldl sampling (Vec3 0 0 0, g) [1 .. spp]
       where
-        g = mkStdGen $ y * width size + x
+        g = mkStdGen $ y * w + x
         sampling :: RandomGen g => (Vec3 Float, g) -> a -> (Vec3 Float, g)
-        sampling (acc, g) _ = (acc + (ray2color objs . pos2ray cam) (u, v), g')
+        sampling (acc, g) _ = (acc + color, g')
           where
-            func f v = v / ((+ (-1)) . toFloat . f) size
-            (u, v) = (func width (toFloat x + i), func height (toFloat y + j))
+            func a b = a / ((+ (-1)) . toFloat) b
             (i, g1) = sampleFloat g
-            (j, g') = sampleFloat g1
+            (j, g2) = sampleFloat g1
+            (u, v) = (func (toFloat x + i) w, func (toFloat y + j) h)
+            ray = pos2ray cam (u, v)
+            (color, g') = ray2color objs g2 rayDepth ray
 
 vec2color :: (Integral b, Integral a) => a -> Vec3 Float -> Color b
-vec2color spp = fmap (truncate . (* 256) . clamp 0 0.999 . (/ toFloat spp))
+vec2color spp =
+  fmap (truncate . (* 256) . clamp 0 0.999 . sqrt . (/ toFloat spp))
   where
     clamp min' max' x = max min' . min max' $ x
 
@@ -67,11 +77,24 @@ pos2ray cam (u, v) =
         (cameraPos cam)
         (llc + pure u * camHVec cam + pure v * camVVec cam - cameraPos cam)
 
-ray2color :: Hittable a => a -> Ray -> Vec3 Float
-ray2color objs r =
-  let hr = hit objs r (HitRange 0 maxValue)
-   in maybe backgroundRayColor ((* 0.5) . (+ 1) . hitNormal) hr
+ray2color ::
+     (RandomGen g, Hittable a) => a -> g -> Int -> Ray -> (Vec3 Float, g)
+ray2color objs g depth r
+  | depth <= 0 = (Vec3 0 0 0, g)
+  | isNothing hr = (backgroundRayColor, g)
+  | otherwise = hitRecursively (fromJust hr) g
   where
+    hr = hit objs r (HitRange 0.001 maxValue)
     backgroundRayColor =
       let t' = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
        in pure (1 - t') + pure t' * Vec3 0.5 0.7 1.0
+    hitRecursively hr g = (0.5 * color, g')
+      where
+        (randHemisphereVec, g1) = sampleInHemisPhere (hitNormal hr) g
+        target = hitPoint hr + randHemisphereVec
+        (color, g') =
+          ray2color
+            objs
+            g'
+            (depth - 1)
+            (Ray (hitPoint hr) (target - hitPoint hr))
