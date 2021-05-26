@@ -1,7 +1,11 @@
+{-# LANGUAGE ExistentialQuantification #-}
+
 module Camera where
 
 import           Data.Maybe
+import           Hit
 import           Hittable.Hittable
+import           Material.Lambertian
 import           Numeric.Limits
 import           Ray
 import           Sampling
@@ -77,8 +81,6 @@ pos2ray cam (u, v) =
         (cameraPos cam)
         (llc + pure u * camHVec cam + pure v * camVVec cam - cameraPos cam)
 
-ray2color ::
-     (RandomGen g, Hittable a) => a -> g -> Int -> Ray -> (Vec3 Float, g)
 ray2color objs g depth r
   | depth <= 0 = (Vec3 0 0 0, g)
   | isNothing hr = (backgroundRayColor, g)
@@ -88,13 +90,13 @@ ray2color objs g depth r
     backgroundRayColor =
       let t' = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
        in pure (1 - t') + pure t' * Vec3 0.5 0.7 1.0
-    hitRecursively hr g = (0.5 * color, g')
+    hitRecursively hr@(HitRecord _ _ _ _ (Material m)) g
+      | isJust _scattered =
+        let scattered' = fromJust _scattered
+            attenuation = attenuationColor scattered'
+            (color, g') =
+              ray2color objs g1 (depth - 1) (scatteredRay scattered')
+         in (attenuation * color, g')
+      | otherwise = (Vec3 0 0 0, g)
       where
-        (randHemisphereVec, g1) = sampleInHemisPhere (hitNormal hr) g
-        target = hitPoint hr + randHemisphereVec
-        (color, g') =
-          ray2color
-            objs
-            g'
-            (depth - 1)
-            (Ray (hitPoint hr) (target - hitPoint hr))
+        (_scattered, g1) = scatter m r hr g

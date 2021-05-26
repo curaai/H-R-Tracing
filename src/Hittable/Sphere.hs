@@ -2,16 +2,17 @@ module Hittable.Sphere where
 
 import           Data.Maybe
 
+import           Hit
 import           Hittable.Hittable
 import           Ray
 import           Vector
 
 data Sphere =
   Sphere
-    { sphereCenter :: Point
-    , sphereRadius :: Float
+    { sphereCenter   :: Point
+    , sphereRadius   :: Float
+    , sphereMaterial :: Material
     }
-  deriving (Show)
 
 instance Hittable Sphere where
   hit sp ray hitRange
@@ -30,6 +31,7 @@ instance Hittable Sphere where
              else negate normal)
           t
           frontFace
+          (sphereMaterial sp)
     where
       nearestRoot
         | isInRange rootMinus hitRange = Just rootMinus

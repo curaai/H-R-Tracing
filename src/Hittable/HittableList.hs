@@ -1,6 +1,7 @@
 module Hittable.HittableList where
 
 import           Data.Maybe
+import           Hit
 import           Hittable.Hittable
 
 instance (Hittable a) => Hittable [a] where

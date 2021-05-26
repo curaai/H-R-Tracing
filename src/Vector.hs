@@ -63,6 +63,11 @@ vCross v1 v2 = Vec3 x y z
     y = (_z v1 * _x v2) - (_x v1 * _z v2)
     z = (_x v1 * _y v2) - (_y v1 * _x v2)
 
+vNearZero :: (Ord a, Floating a) => Vec3 a -> Bool
+vNearZero = and . fmap (< 1e-8)
+
+vReflect v n = v - pure (2 * vDot v n) * n
+
 vSetX v x = Vec3 x (_y v) (_z v)
 
 vSetY v x = Vec3 (_x v) x (_z v)

@@ -3,8 +3,6 @@ cabal-version: 1.12
 -- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: b66d6e1057ca1a5b3ee122352079838d87bf233b6d25d0bf3094b3061bc2afa2
 
 name:           H-R-Tracing
 version:        0.1.0.0
@@ -28,11 +26,13 @@ source-repository head
 library
   exposed-modules:
       Camera
+      Hit
       Hittable.Hittable
       Hittable.HittableList
       Hittable.Sphere
       Lib
-      Material.Scatterable
+      Material.Lambertian
+      Material.Metal
       Ray
       Sampling
       Vector
@@ -54,7 +54,7 @@ executable H-R-Tracing-exe
       Paths_H_R_Tracing
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N -Wall
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       H-R-Tracing
     , base >=4.7 && <5
