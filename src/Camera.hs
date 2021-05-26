@@ -40,12 +40,12 @@ lowerLeftCorner cam =
 toFloat x = fromIntegral x :: Float
 
 render ::
-     (Integral b, Integral a1, Hittable a2)
+     (Integral b, Hittable a)
   => Camera
   -> Size Int
-  -> a1
   -> Int
-  -> a2
+  -> Int
+  -> a
   -> [Color b]
 render cam (Size w h) spp rayDepth objs = map computeColor coords
   where

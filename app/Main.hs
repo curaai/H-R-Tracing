@@ -2,17 +2,19 @@ module Main where
 
 import qualified Data.ByteString.Char8 as C
 
-import           Camera
-import           Hittable.Hittable
-import           Hittable.HittableList
-import           Hittable.Sphere
-import           Vector
+import           Camera                (Camera (Camera), Size (..), render)
+import           Hittable.Hittable     (Hittable)
+import           Hittable.HittableList ()
+import           Hittable.Sphere       (Sphere (Sphere))
+import           Vector                (Vec3 (Vec3))
 
+aspectRatio :: Float
 aspectRatio = 16 / 9
 
+drawImg :: Hittable a2 => Size Int -> a2 -> String
 drawImg size hittables = unlines $ "P3" : size' : "255" : map show arr
   where
-    arr = render cam size 50 hittables
+    arr = render cam size 50 50 hittables
       where
         cam =
           Camera
