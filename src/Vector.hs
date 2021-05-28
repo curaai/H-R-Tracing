@@ -66,7 +66,16 @@ vCross v1 v2 = Vec3 x y z
 vNearZero :: (Ord a, Floating a) => Vec3 a -> Bool
 vNearZero = and . fmap (< 1e-8)
 
+vReflect :: Num a => Vec3 a -> Vec3 a -> Vec3 a
 vReflect v n = v - pure (2 * vDot v n) * n
+
+vRefract :: (Ord a, Floating a) => Vec3 a -> Vec3 a -> a -> Vec3 a
+vRefract uv n etaiOverEtat = outPerp + outParallel
+  where
+    cosTheta = min (vDot (-uv) n) 1
+    outPerp = pure etaiOverEtat * (uv + pure cosTheta * n)
+    outParallel =
+      (* n) . pure . negate . sqrt . abs $ 1 - vLengthSquared outPerp
 
 vSetX v x = Vec3 x (_y v) (_z v)
 

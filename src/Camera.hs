@@ -81,6 +81,13 @@ pos2ray cam (u, v) =
         (cameraPos cam)
         (llc + pure u * camHVec cam + pure v * camVVec cam - cameraPos cam)
 
+ray2color ::
+     (Ord t, RandomGen p, Num t, Hittable a)
+  => a
+  -> p
+  -> t
+  -> Ray
+  -> (Vec3 Float, p)
 ray2color objs g depth r
   | depth <= 0 = (Vec3 0 0 0, g)
   | isNothing hr = (backgroundRayColor, g)
