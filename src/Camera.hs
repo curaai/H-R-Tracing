@@ -5,7 +5,10 @@ module Camera where
 import           Data.Maybe
 import           Hit
 import           Hittable.Hittable
+import           Hittable.Sphere
+import           Material.Dielectric
 import           Material.Lambertian
+import           Material.Metal
 import           Numeric.Limits
 import           Ray
 import           Sampling
@@ -25,12 +28,23 @@ data Camera =
     , horizontal      :: Vec3 Float
     , vertical        :: Vec3 Float
     , lowerLeftCorner :: Point
+    , camW            :: Vec3 Float
+    , camU            :: Vec3 Float
+    , camV            :: Vec3 Float
+    , lensRaidus      :: Float
     }
   deriving (Show)
 
-pos2ray :: Camera -> (Float, Float) -> Ray
-pos2ray (Camera origin' horizontal' vertical' llc) (u, v) =
-  Ray origin' (llc + pure u * horizontal' + pure v * vertical' - origin')
+pos2ray :: RandomGen g => Camera -> (Float, Float) -> g -> (Ray, g)
+pos2ray cam@(Camera origin' horizontal' vertical' llc cw cu cv lensRaidus') (u, v) g =
+  ( Ray
+      (origin' + offset)
+      (llc + pure u * horizontal' + pure v * vertical' - origin' - offset)
+  , g')
+  where
+    (randUnitDisk, g') = sampleInUnitDisk g
+    rd = pure lensRaidus' * randUnitDisk
+    offset = cu * (pure . _x) rd + cv * (pure . _y) rd
 
 toFloat x = fromIntegral x :: Float
 
@@ -56,8 +70,8 @@ render cam (Size w h) spp rayDepth objs = map computeColor coords
             (i, g1) = sampleFloat g
             (j, g2) = sampleFloat g1
             (u, v) = (func (toFloat x + i) w, func (toFloat y + j) h)
-            ray = pos2ray cam (u, v)
-            (color, g') = ray2color objs g2 rayDepth ray
+            (ray, g3) = pos2ray cam (u, v) g2
+            (color, g') = ray2color objs g3 rayDepth ray
 
 vec2color :: (Integral b, Integral a) => a -> Vec3 Float -> Color b
 vec2color spp =

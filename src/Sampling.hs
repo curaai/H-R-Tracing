@@ -14,6 +14,14 @@ sampleVector g = (Vec3 x' y' z', g3)
     (y', g2) = sampleFloat g1
     (z', g3) = sampleFloat g2
 
+sampleVectorR :: RandomGen b => b -> Float -> Float -> (Vec3 Float, b)
+sampleVectorR g min' max' = (Vec3 x' y' z', g3)
+  where
+    sampleFloat' g = randomR (min', max') g
+    (x', g1) = sampleFloat' g
+    (y', g2) = sampleFloat' g1
+    (z', g3) = sampleFloat' g2
+
 sampleUnitSphere :: RandomGen g => g -> (Vec3 Float, g)
 sampleUnitSphere g = find (Vec3 1 1 1, g)
   where
@@ -34,3 +42,14 @@ sampleInHemisPhere normal' g
   | otherwise = (-inUnitSphere, g')
   where
     (inUnitSphere, g') = sampleUnitVector g
+
+sampleInUnitDisk :: RandomGen g => g -> (Vec3 Float, g)
+sampleInUnitDisk g = find (Vec3 1 1 1, g)
+  where
+    find (v, g')
+      | vLengthSquared v < 1 = (v, g2)
+      | otherwise = find (Vec3 x' y' 0, g2)
+      where
+        sampleFloat' g = randomR (-1, 1) g
+        (x', g1) = sampleFloat' g'
+        (y', g2) = sampleFloat' g1
