@@ -21,25 +21,16 @@ data Size a =
 
 data Camera =
   Camera
-    { viewportSize :: Size Float
-    , cameraPos    :: Vec3 Float
-    , cameraDir    :: Vec3 Float
-    , focalLength  :: Float
+    { lookFrom        :: Point
+    , horizontal      :: Vec3 Float
+    , vertical        :: Vec3 Float
+    , lowerLeftCorner :: Point
     }
   deriving (Show)
 
-camHVec :: Camera -> Vec3 Float
-camHVec cam = Vec3 (width . viewportSize $ cam) 0 0
-
-camVVec :: Camera -> Vec3 Float
-camVVec cam = Vec3 0 (height . viewportSize $ cam) 0
-
-camLVec :: Camera -> Vec3 Float
-camLVec cam = Vec3 0 0 (focalLength cam)
-
-lowerLeftCorner :: Camera -> Vec3 Float
-lowerLeftCorner cam =
-  cameraPos cam - camHVec cam * 0.5 - camVVec cam * 0.5 - camLVec cam
+pos2ray :: Camera -> (Float, Float) -> Ray
+pos2ray (Camera origin' horizontal' vertical' llc) (u, v) =
+  Ray origin' (llc + pure u * horizontal' + pure v * vertical' - origin')
 
 toFloat x = fromIntegral x :: Float
 
@@ -73,13 +64,6 @@ vec2color spp =
   fmap (truncate . (* 256) . clamp 0 0.999 . sqrt . (/ toFloat spp))
   where
     clamp min' max' x = max min' . min max' $ x
-
-pos2ray :: Camera -> (Float, Float) -> Ray
-pos2ray cam (u, v) =
-  let llc = lowerLeftCorner cam
-   in Ray
-        (cameraPos cam)
-        (llc + pure u * camHVec cam + pure v * camVVec cam - cameraPos cam)
 
 ray2color ::
      (Ord t, RandomGen p, Num t, Hittable a)
