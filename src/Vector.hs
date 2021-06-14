@@ -4,9 +4,9 @@ import           Control.Applicative
 
 data Vec3 a =
   Vec3
-    { _x :: a
-    , _y :: a
-    , _z :: a
+    { _x :: !a
+    , _y :: !a
+    , _z :: !a
     }
   deriving (Eq)
 
@@ -42,43 +42,37 @@ instance Fractional a => Fractional (Vec3 a) where
   recip = fmap recip
   fromRational = pure . fromRational
 
-vDot :: Num a => Vec3 a -> Vec3 a -> a
+vDot :: Vec -> Vec -> Float
 vDot v1 v2 = sum $ v1 * v2
 
-vLength :: Floating a => Vec3 a -> a
+vLength :: Vec -> Float
 vLength v = sqrt $ vDot v v
 
-vLengthSquared :: Floating a => Vec3 a -> a
+vLengthSquared :: Vec -> Float
 vLengthSquared v = vDot v v
 
-vUnit :: Floating b => Vec3 b -> Vec3 b
+vUnit :: Vec -> Vec
 vUnit v =
   let k = recip . vLength $ v
    in fmap (* k) v
 
-vCross :: Num a => Vec3 a -> Vec3 a -> Vec3 a
+vCross :: Vec -> Vec -> Vec
 vCross v1 v2 = Vec3 x y z
   where
     x = (_y v1 * _z v2) - (_z v1 * _y v2)
     y = (_z v1 * _x v2) - (_x v1 * _z v2)
     z = (_x v1 * _y v2) - (_y v1 * _x v2)
 
-vNearZero :: (Ord a, Floating a) => Vec3 a -> Bool
+vNearZero :: Vec -> Bool
 vNearZero = and . fmap (< 1e-8)
 
-vReflect :: Num a => Vec3 a -> Vec3 a -> Vec3 a
+vReflect :: Vec -> Vec -> Vec
 vReflect v n = v - pure (2 * vDot v n) * n
 
-vRefract :: (Ord a, Floating a) => Vec3 a -> Vec3 a -> a -> Vec3 a
+vRefract :: Vec -> Vec -> Float -> Vec
 vRefract uv n etaiOverEtat = outPerp + outParallel
   where
     cosTheta = min (vDot (-uv) n) 1
     outPerp = pure etaiOverEtat * (uv + pure cosTheta * n)
     outParallel =
       (* n) . pure . negate . sqrt . abs $ 1 - vLengthSquared outPerp
-
-vSetX v x = Vec3 x (_y v) (_z v)
-
-vSetY v x = Vec3 (_x v) x (_z v)
-
-vSetZ v = Vec3 (_x v) (_y v)

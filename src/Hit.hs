@@ -9,17 +9,17 @@ import           Vector
 
 data HitRecord =
   HitRecord
-    { hitPoint     :: Point
-    , hitNormal    :: Vec3 Float
-    , hitT         :: Float
-    , hitFrontFace :: Bool
-    , hitMaterial  :: Material
+    { hitPoint     :: !Point
+    , hitNormal    :: !Vec
+    , hitT         :: !Float
+    , hitFrontFace :: !Bool
+    , hitMaterial  :: !Material
     }
 
 data HitRange =
   HitRange
-    { hitTMin :: Float
-    , hitTMax :: Float
+    { hitTMin :: !Float
+    , hitTMax :: !Float
     }
   deriving (Show, Eq)
 
@@ -29,8 +29,8 @@ data Material =
 
 data Scattered =
   Scattered
-    { scatteredRay     :: Ray
-    , attenuationColor :: Vec3 Float
+    { scatteredRay     :: !Ray
+    , attenuationColor :: !Vec
     }
 
 class Scatterable a where

@@ -26,14 +26,14 @@ data Size a =
 
 data Camera =
   Camera
-    { lookFrom        :: Point
-    , horizontal      :: Vec3 Float
-    , vertical        :: Vec3 Float
-    , lowerLeftCorner :: Point
-    , camW            :: Vec3 Float
-    , camU            :: Vec3 Float
-    , camV            :: Vec3 Float
-    , lensRaidus      :: Float
+    { lookFrom        :: !Point
+    , horizontal      :: !Vec
+    , vertical        :: !Vec
+    , lowerLeftCorner :: !Point
+    , camW            :: !Vec
+    , camU            :: !Vec
+    , camV            :: !Vec
+    , lensRaidus      :: !Float
     }
   deriving (Show)
 
@@ -58,7 +58,7 @@ render cam (Size w h) spp rayDepth objs =
       vec2color spp . fst $ foldl sampling (Vec3 0 0 0, g) [1 .. spp]
       where
         g = mkStdGen $ y * w + x
-        sampling :: RandomGen g => (Vec3 Float, g) -> a -> (Vec3 Float, g)
+        sampling :: RandomGen g => (Vec, g) -> a -> (Vec, g)
         sampling (acc, g) _ = (acc + color, g')
           where
             func a b = a / ((+ (-1)) . toFloat) b
@@ -68,7 +68,7 @@ render cam (Size w h) spp rayDepth objs =
             (ray, g3) = pos2ray cam (u, v) g2
             (color, g') = ray2color objs g3 rayDepth ray
 
-vec2color :: (Integral b, Integral a) => a -> Vec3 Float -> Color b
+vec2color :: (Integral b, Integral a) => a -> Vec -> Color b
 vec2color spp =
   fmap (truncate . (* 256) . clamp 0 0.999 . sqrt . (/ toFloat spp))
   where
@@ -80,7 +80,7 @@ ray2color ::
   -> p
   -> t
   -> Ray
-  -> (Vec3 Float, p)
+  -> (Vec, p)
 ray2color objs g depth r
   | depth <= 0 = (Vec3 0 0 0, g)
   | isNothing hr = (backgroundRayColor, g)

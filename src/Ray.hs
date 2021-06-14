@@ -4,8 +4,8 @@ import           Vector
 
 data Ray =
   Ray
-    { origin    :: Point
-    , direction :: Vec
+    { origin    :: !Point
+    , direction :: !Vec
     }
   deriving (Show, Eq)
 
