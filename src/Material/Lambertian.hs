@@ -1,9 +1,10 @@
 module Material.Lambertian where
 
-import           Hit
-import           Ray
-import           Sampling
-import           Vector
+import           Hit      (HitRecord (HitRecord), Scatterable (..),
+                           Scattered (Scattered))
+import           Ray      (Ray (Ray))
+import           Sampling (sampleUnitVector)
+import           Vector   (Color, vNearZero)
 
 data Lambertian =
   Lambertian

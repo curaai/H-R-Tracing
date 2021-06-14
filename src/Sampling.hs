@@ -1,8 +1,8 @@
 module Sampling where
 
-import           Data.Bifunctor
+import           Data.Bifunctor (Bifunctor (first))
 import           System.Random  (RandomGen, mkStdGen, randomR)
-import           Vector
+import           Vector         (Vec3 (Vec3), vDot, vLengthSquared, vUnit, Vec)
 
 sampleFloat :: RandomGen g => g -> (Float, g)
 sampleFloat g = randomR (0, 1) g

@@ -1,6 +1,6 @@
 module Ray where
 
-import           Vector
+import           Vector (Point, Vec)
 
 data Ray =
   Ray
