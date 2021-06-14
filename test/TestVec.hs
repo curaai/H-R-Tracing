@@ -7,7 +7,7 @@ import           Test.Tasty.HUnit
 
 import           Vector
 
-truncate' :: Double -> Double
+truncate' :: Float -> Float
 truncate' x = fromIntegral (floor (x * t)) / t
   where
     t = 10 ^ 4

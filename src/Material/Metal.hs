@@ -1,9 +1,10 @@
 module Material.Metal where
 
-import           Hit
-import           Ray
-import           Sampling
-import           Vector
+import           Hit      (HitRecord (HitRecord), Scatterable (..),
+                           Scattered (Scattered))
+import           Ray      (Ray (Ray, direction))
+import           Sampling (sampleUnitSphere)
+import           Vector   (Color, vDot, vReflect, vUnit)
 
 data Metal =
   Metal

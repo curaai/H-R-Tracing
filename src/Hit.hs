@@ -2,10 +2,9 @@
 
 module Hit where
 
-import           Ray
-import           Sampling
-import           System.Random
-import           Vector
+import           Ray           (Ray)
+import           System.Random (RandomGen)
+import           Vector        (Point, Vec)
 
 data HitRecord =
   HitRecord

@@ -2,20 +2,21 @@
 
 module Camera where
 
-import           Data.Maybe
-import           Hit
-import           Hittable.Hittable
-import           Hittable.Sphere
-import           Material.Dielectric
-import           Material.Lambertian
-import           Material.Metal
-import           Numeric.Limits
-import           Ray
-import           Sampling
-import           System.Random
-import           Vector
+import           Data.Maybe                  (fromJust, isJust, isNothing)
+import           Hit                         (HitRange (HitRange),
+                                              HitRecord (HitRecord),
+                                              Material (Material),
+                                              Scatterable (scatter),
+                                              Scattered (attenuationColor, scatteredRay))
+import           Hittable.Hittable           (Hittable (..))
+import           Numeric.Limits              (maxValue)
+import           Ray                         (Ray (Ray, direction))
+import           Sampling                    (sampleFloat, sampleInUnitDisk)
+import           System.Random               (RandomGen, mkStdGen)
+import           Vector                      (Color, Point, Vec,
+                                              Vec3 (Vec3, _x, _y), vUnit)
 
-import           Control.Parallel.Strategies
+import           Control.Parallel.Strategies (parBuffer, rseq, withStrategy)
 
 data Size a =
   Size

@@ -1,11 +1,11 @@
 module Hittable.Sphere where
 
-import           Data.Maybe
+import           Data.Maybe        (fromJust, isNothing)
 
-import           Hit
-import           Hittable.Hittable
-import           Ray
-import           Vector
+import           Hit               (HitRecord (HitRecord), Material)
+import           Hittable.Hittable (Hittable (..), isInRange)
+import           Ray               (Ray (direction, origin), at)
+import           Vector            (Point, vDot, vLengthSquared)
 
 data Sphere =
   Sphere

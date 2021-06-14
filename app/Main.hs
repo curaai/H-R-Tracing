@@ -2,19 +2,22 @@ module Main where
 
 import qualified Data.ByteString.Char8 as C
 
-import           Camera
-import           Data.Maybe
-import           Hit
-import           Hittable.Hittable
-import           Hittable.HittableList
-import           Hittable.Sphere
-import           Material.Dielectric
-import           Material.Lambertian
-import           Material.Metal
-import           Sampling
+import           Camera                (Camera (Camera), Size (..), render)
+import           Data.Maybe            (catMaybes)
+import           Hit                   (Material (Material))
+import           Hittable.Hittable     (Hittable)
+import           Hittable.HittableList ()
+import           Hittable.Sphere       (Sphere (Sphere))
+import           Material.Dielectric   (Dielectric (Dielectric))
+import           Material.Lambertian   (Lambertian (Lambertian))
+import           Material.Metal        (Metal (Metal))
+import           Sampling              (sampleFloat, sampleVector,
+                                        sampleVectorR)
 import           System.Random         (RandomGen, mkStdGen, randomR)
-import           Vector
+import           Vector                (Point, Vec3 (Vec3), vCross, vLength,
+                                        vUnit)
 
+aspectRatio :: Float
 aspectRatio = 3 / 2
 
 drawImg :: Hittable a2 => Size Int -> a2 -> String

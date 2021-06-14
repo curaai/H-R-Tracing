@@ -1,10 +1,11 @@
 module Material.Dielectric where
 
-import           Data.Bool
-import           Hit
-import           Ray
-import           Sampling
-import           Vector
+import           Data.Bool (bool)
+import           Hit       (HitRecord (HitRecord), Scatterable (..),
+                            Scattered (Scattered))
+import           Ray       (Ray (Ray, direction))
+import           Sampling  (sampleFloat)
+import           Vector    (Vec3 (Vec3), vDot, vReflect, vRefract, vUnit)
 
 newtype Dielectric =
   Dielectric

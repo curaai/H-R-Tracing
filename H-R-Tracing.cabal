@@ -4,7 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
+<<<<<<< HEAD
 -- hash: 0fa743be66928a829f6492deeb39bb013b505544a922d8cdd69dee52929d089c
+=======
+-- hash: d43121174cff18d936dbe9b15796a34d1ab7b09adba2dd096ee1fe51367ebe9b
+>>>>>>> 8e1357c... :art: Replace importing for each files
 
 name:           H-R-Tracing
 version:        0.1.0.0

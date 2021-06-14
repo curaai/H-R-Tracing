@@ -1,6 +1,6 @@
 module Vector where
 
-import           Control.Applicative
+import           Control.Applicative (Applicative (liftA2))
 
 data Vec3 a =
   Vec3
