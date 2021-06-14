@@ -51,6 +51,14 @@ pos2ray cam@(Camera origin' horizontal' vertical' llc cw cu cv lensRaidus') (u, 
 
 toFloat x = fromIntegral x :: Float
 
+render ::
+     (Integral b, Integral a1, Ord t, Num t, Hittable a2)
+  => Camera
+  -> Size Int
+  -> a1
+  -> t
+  -> a2
+  -> [Color b]
 render cam (Size w h) spp rayDepth objs =
   withStrategy (parBuffer 100 rseq) $ map computeColor coords
   where
@@ -71,9 +79,7 @@ render cam (Size w h) spp rayDepth objs =
 
 vec2color :: (Integral b, Integral a) => a -> Vec -> Color b
 vec2color spp =
-  fmap (truncate . (* 256) . clamp 0 0.999 . sqrt . (/ toFloat spp))
-  where
-    clamp min' max' x = max min' . min max' $ x
+  fmap (truncate . (* 256) . (max 0 . min 0.999) . sqrt . (/ toFloat spp))
 
 ray2color ::
      (Ord t, RandomGen p, Num t, Hittable a)
@@ -84,13 +90,10 @@ ray2color ::
   -> (Vec, p)
 ray2color objs g depth r
   | depth <= 0 = (Vec3 0 0 0, g)
-  | isNothing hr = (backgroundRayColor, g)
+  | isNothing hr = (bgRayColor r, g)
   | otherwise = hitRecursively (fromJust hr) g
   where
     hr = hit objs r (HitRange 0.001 maxValue)
-    backgroundRayColor =
-      let t' = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
-       in pure (1 - t') + pure t' * Vec3 0.5 0.7 1.0
     hitRecursively hr@(HitRecord _ _ _ _ (Material m)) g
       | isJust _scattered =
         let scattered' = fromJust _scattered
@@ -101,3 +104,8 @@ ray2color objs g depth r
       | otherwise = (Vec3 0 0 0, g)
       where
         (_scattered, g1) = scatter m r hr g
+
+bgRayColor :: Ray -> Vec3 Float
+bgRayColor r =
+  let t = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
+   in pure (1 - t) + pure t * Vec3 0.5 0.7 1.0

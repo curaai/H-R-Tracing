@@ -1,10 +1,13 @@
-module Hittable.Sphere where
+module Hittable.Sphere
+  ( Sphere(Sphere)
+  ) where
 
+import           Data.Bool
 import           Data.Maybe        (fromJust, isNothing)
 
-import           Hit               (HitRecord (HitRecord), Material)
+import           Hit               (HitRange, HitRecord (HitRecord), Material)
 import           Hittable.Hittable (Hittable (..), isInRange)
-import           Ray               (Ray (direction, origin), at)
+import           Ray
 import           Vector            (Point, vDot, vLengthSquared)
 
 data Sphere =
@@ -15,36 +18,30 @@ data Sphere =
     }
 
 instance Hittable Sphere where
-  hit sp ray hitRange
-    | discriminant < 0 = Nothing
-    | isNothing nearestRoot = Nothing
-    | otherwise = do
-      let t = fromJust nearestRoot
-      let p = at ray t
-      let normal = (p - sphereCenter sp) / (pure . sphereRadius) sp
-      let frontFace = vDot (direction ray) normal < 0
-      return $
-        HitRecord
-          p
-          (if frontFace
-             then normal
-             else negate normal)
-          t
-          frontFace
-          (sphereMaterial sp)
-    where
-      nearestRoot
-        | isInRange rootMinus hitRange = Just rootMinus
-        | isInRange rootPlus hitRange = Just rootPlus
-        | otherwise = Nothing
-        where
-          rootMinus = ((-halfB) - sqrt discriminant) / a
-          rootPlus = ((-halfB) + sqrt discriminant) / a
-      (discriminant, halfB, a) = getRoot sp ray
-      getRoot sp ray = (discriminant, halfB, a)
-        where
-          discriminant = halfB ^ 2 - a * c
-          oc = origin ray - sphereCenter sp
-          a = vLengthSquared . direction $ ray
-          halfB = vDot oc (direction ray)
-          c = vLengthSquared oc - sphereRadius sp ^ 2
+  hit sp@(Sphere ctr radius mtr) ray hitRange = do
+    t <- findNearestRoot sp ray hitRange
+    let p = at ray t
+        normal = (p - ctr) / pure radius
+        frontFace = 0 > vDot (direction ray) normal
+    return $ HitRecord p (bool negate id frontFace normal) t frontFace mtr
+
+findNearestRoot :: Sphere -> Ray -> HitRange -> Maybe Float
+findNearestRoot sphere ray hitRange
+  | discriminant < 0 = Nothing
+  | otherwise = nearestRoot
+  where
+    (discriminant, halfB, a) = findRoot sphere ray
+    nearestRoot
+      | isInRange rootMinus hitRange = Just rootMinus
+      | isInRange rootPlus hitRange = Just rootPlus
+      | otherwise = Nothing
+      where
+        rootMinus = ((-halfB) - sqrt discriminant) / a
+        rootPlus = ((-halfB) + sqrt discriminant) / a
+    findRoot (Sphere ctr radius _) (Ray ori dir) = (discriminant, halfB, a)
+      where
+        discriminant = halfB * halfB - a * c
+        a = vLengthSquared dir
+        c = vLengthSquared oc - radius * radius
+        oc = ori - ctr
+        halfB = vDot oc dir
