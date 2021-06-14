@@ -15,6 +15,8 @@ import           Sampling
 import           System.Random
 import           Vector
 
+import           Control.Parallel.Strategies
+
 data Size a =
   Size
     { width  :: a
@@ -48,15 +50,8 @@ pos2ray cam@(Camera origin' horizontal' vertical' llc cw cu cv lensRaidus') (u, 
 
 toFloat x = fromIntegral x :: Float
 
-render ::
-     (Integral b, Hittable a)
-  => Camera
-  -> Size Int
-  -> Int
-  -> Int
-  -> a
-  -> [Color b]
-render cam (Size w h) spp rayDepth objs = map computeColor coords
+render cam (Size w h) spp rayDepth objs =
+  withStrategy (parBuffer 100 rseq) $ map computeColor coords
   where
     coords = (,) <$> reverse [0 .. h - 1] <*> [0 .. w - 1]
     computeColor (y, x) =

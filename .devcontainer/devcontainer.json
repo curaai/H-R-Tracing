@@ -1,6 +1,6 @@
 {
     "name": "Haskell Ray Tracing Dev container",
-    "dockerFile": "Dockerfile",
+    "image": "curaai00/haskell-dev:0.1",
     "runArgs": [],
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash",
