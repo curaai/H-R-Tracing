@@ -18,12 +18,12 @@ instance Scatterable Dielectric where
     where
       (randFloat, g') = sampleFloat g
       scattered = Ray p refracted
-      attenuation = Vec3 1 1 1
+      attenuation = pure 1
       refracted =
         if (let cosTheta = min (vDot (-unitDir) normal) 1
                 sinTheta = sqrt $ 1 - cosTheta ^ 2
              in refractionRatio * sinTheta > 1 ||
-                reflectance cosTheta refractionRatio > randFloat)
+                randFloat < reflectance cosTheta refractionRatio)
           then vReflect unitDir normal
           else vRefract unitDir normal refractionRatio
         where

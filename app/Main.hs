@@ -104,5 +104,5 @@ main =
   C.writeFile "res.ppm" . C.pack $
   drawImg (Size w (truncate ((fromIntegral w :: Float) / aspectRatio))) world
   where
-    w = 400 :: Int
+    w = 800 :: Int
     world = mkRandomScene $ mkStdGen 1

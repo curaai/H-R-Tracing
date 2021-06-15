@@ -12,5 +12,5 @@ instance (Hittable a) => Hittable [a] where
       f :: Hittable a => Maybe HitRecord -> a -> Maybe HitRecord
       f hr obj = bool res hr (isNothing res)
         where
-          rr' = rr {hitTMin = maybe (hitTMax rr) hitT hr}
+          rr' = rr {hitTMax = maybe (hitTMax rr) hitT hr}
           res = hit obj ray rr'
