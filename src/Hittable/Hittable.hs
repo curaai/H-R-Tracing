@@ -1,10 +1,10 @@
 module Hittable.Hittable where
 
-import           Hit (HitRange (hitTMax, hitTMin), HitRecord)
+import           Hit
 import           Ray (Ray)
 
 isInRange :: Float -> HitRange -> Bool
-isInRange v range = hitTMin range < v && v < hitTMax range
+isInRange v (HitRange tmin tmax) = tmin < v && v < tmax
 
 class Hittable a where
   hit :: a -> Ray -> HitRange -> Maybe HitRecord

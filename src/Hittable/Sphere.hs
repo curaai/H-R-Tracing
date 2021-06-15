@@ -2,12 +2,12 @@ module Hittable.Sphere
   ( Sphere(Sphere)
   ) where
 
-import           Data.Bool
+import           Data.Bool         (bool)
 import           Data.Maybe        (fromJust, isNothing)
 
 import           Hit               (HitRange, HitRecord (HitRecord), Material)
 import           Hittable.Hittable (Hittable (..), isInRange)
-import           Ray
+import           Ray               (Ray (Ray, direction), at)
 import           Vector            (Point, vDot, vLengthSquared)
 
 data Sphere =

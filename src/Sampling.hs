@@ -1,6 +1,7 @@
 module Sampling where
 
 import           Data.Bifunctor (Bifunctor (first))
+import           Data.Bool      (bool)
 import           System.Random  (RandomGen, mkStdGen, randomR)
 import           Vector         (Vec3 (Vec3), vDot, vLengthSquared, vUnit, Vec)
 
@@ -26,10 +27,10 @@ sampleUnitSphere :: RandomGen g => g -> (Vec, g)
 sampleUnitSphere g = find (Vec3 1 1 1, g)
   where
     find (v, g')
-      | vLengthSquared (fmap f v) < 1 = (fmap f v, g')
+      | vLengthSquared v' < 1 = (v', g')
       | otherwise = find (sampleVector g')
       where
-        f x = 2 * (x - 0.5)
+        v' = fmap ((* 2) . (+ (-0.5))) v
 
 sampleUnitVector :: RandomGen g => g -> (Vec, g)
 sampleUnitVector g =
@@ -37,9 +38,8 @@ sampleUnitVector g =
    in first vUnit sampled
 
 sampleInHemisPhere :: RandomGen g => Vec -> g -> (Vec, g)
-sampleInHemisPhere normal' g
-  | 0 < vDot inUnitSphere normal' = (inUnitSphere, g')
-  | otherwise = (-inUnitSphere, g')
+sampleInHemisPhere normal' g =
+  (bool negate id (0 < vDot inUnitSphere normal') inUnitSphere, g')
   where
     (inUnitSphere, g') = sampleUnitVector g
 

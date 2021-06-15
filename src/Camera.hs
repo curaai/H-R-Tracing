@@ -3,11 +3,13 @@
 module Camera where
 
 import           Data.Maybe                  (fromJust, isJust, isNothing)
+
 import           Hit                         (HitRange (HitRange),
-                                              HitRecord (HitRecord),
+                                              HitRecord (HitRecord, hitMaterial),
                                               Material (Material),
                                               Scatterable (scatter),
-                                              Scattered (attenuationColor, scatteredRay))
+                                              Scattered (Scattered))
+
 import           Hittable.Hittable           (Hittable (..))
 import           Numeric.Limits              (maxValue)
 import           Ray                         (Ray (Ray, direction))
@@ -39,7 +41,7 @@ data Camera =
   deriving (Show)
 
 pos2ray :: RandomGen g => Camera -> (Float, Float) -> g -> (Ray, g)
-pos2ray cam@(Camera origin' horizontal' vertical' llc cw cu cv lensRaidus') (u, v) g =
+pos2ray (Camera origin' horizontal' vertical' llc cw cu cv lensRaidus') (u, v) g =
   ( Ray
       (origin' + offset)
       (llc + pure u * horizontal' + pure v * vertical' - origin' - offset)
@@ -49,16 +51,10 @@ pos2ray cam@(Camera origin' horizontal' vertical' llc cw cu cv lensRaidus') (u, 
     rd = pure lensRaidus' * randUnitDisk
     offset = cu * (pure . _x) rd + cv * (pure . _y) rd
 
+toFloat :: Integral a => a -> Float
 toFloat x = fromIntegral x :: Float
 
-render ::
-     (Integral b, Integral a1, Ord t, Num t, Hittable a2)
-  => Camera
-  -> Size Int
-  -> a1
-  -> t
-  -> a2
-  -> [Color b]
+render :: (Hittable a2) => Camera -> Size Int -> Int -> Int -> a2 -> [Color Int]
 render cam (Size w h) spp rayDepth objs =
   withStrategy (parBuffer 100 rseq) $ map computeColor coords
   where
@@ -82,30 +78,23 @@ vec2color spp =
   fmap (truncate . (* 256) . (max 0 . min 0.999) . sqrt . (/ toFloat spp))
 
 ray2color ::
-     (Ord t, RandomGen p, Num t, Hittable a)
-  => a
-  -> p
-  -> t
-  -> Ray
-  -> (Vec, p)
+     (RandomGen t2, Hittable a) => a -> t2 -> Int -> Ray -> (Vec, t2)
 ray2color objs g depth r
   | depth <= 0 = (Vec3 0 0 0, g)
   | isNothing hr = (bgRayColor r, g)
   | otherwise = hitRecursively (fromJust hr) g
   where
     hr = hit objs r (HitRange 0.001 maxValue)
-    hitRecursively hr@(HitRecord _ _ _ _ (Material m)) g
+    hitRecursively hr@HitRecord {hitMaterial = Material m} g
       | isJust _scattered =
-        let scattered' = fromJust _scattered
-            attenuation = attenuationColor scattered'
-            (color, g') =
-              ray2color objs g1 (depth - 1) (scatteredRay scattered')
-         in (attenuation * color, g')
+        let (Scattered sctRay sctColor) = fromJust _scattered
+            (color, g') = ray2color objs g1 (depth - 1) sctRay
+         in (sctColor * color, g')
       | otherwise = (Vec3 0 0 0, g)
       where
         (_scattered, g1) = scatter m r hr g
 
 bgRayColor :: Ray -> Vec3 Float
-bgRayColor r =
-  let t = 0.5 * ((+ 1) . _y . vUnit . direction $ r)
+bgRayColor Ray {direction = dir} =
+  let t = 0.5 * ((+ 1) . _y . vUnit $ dir)
    in pure (1 - t) + pure t * Vec3 0.5 0.7 1.0
