@@ -18,12 +18,12 @@ import           Vector                (Point, Vec3 (Vec3), vCross, vLength,
                                         vUnit)
 
 aspectRatio :: Float
-aspectRatio = 3 / 2
+aspectRatio = 16 / 9
 
 drawImg :: Hittable a2 => Size Int -> a2 -> String
 drawImg size hittables = unlines $ "P3" : size' : "255" : map show arr
   where
-    arr = render cam size 50 50 hittables
+    arr = render cam size 20 75 hittables
       where
         lookfrom = Vec3 13 2 3
         lookat = Vec3 0 0 0
@@ -104,5 +104,5 @@ main =
   C.writeFile "res.ppm" . C.pack $
   drawImg (Size w (truncate ((fromIntegral w :: Float) / aspectRatio))) world
   where
-    w = 800 :: Int
+    w = 1280 :: Int
     world = mkRandomScene $ mkStdGen 1
